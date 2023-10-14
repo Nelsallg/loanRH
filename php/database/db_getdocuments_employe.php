@@ -8,13 +8,11 @@ $connect = $db->getConnection();
 function response(string $message, bool $success = false, array $data = null) {
     $response = ["success" => $success, "message" => $message, "data" => $data];
     return json_encode($response);
-
 }
 $fe = new FormException();
 $messages = $fe->emptyField([
     "numero_securite_sociale" => "nom de l'employe",
     "formtype" => "type de formulaire"
-
 ]);
 if(count($messages)<=0){
     $numero_securite_sociale = strip_tags(trim($_POST['numero_securite_sociale']));
@@ -22,11 +20,17 @@ if(count($messages)<=0){
     if($formtype=="get"){
         if($numero_securite_sociale!==null && $numero_securite_sociale!==""){
             $dossier = getDossiersBy("numero_securite_sociale",$numero_securite_sociale);
+            if(is_bool($dossier) && false === $dossier){
+                echo response('',true);
+                die;
+            }
             echo response('',true,$dossier);
+            die;
         }
     }
 }
 else{
     echo response($fe->getError($messages));
+    die;
 }
 ?>
